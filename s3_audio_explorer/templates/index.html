@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S3 Audio Explorer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <header><div><span class="eyebrow">EXPLORATEUR S3</span><h1>S3 Audio Explorer</h1><p>Explorez votre bucket et retrouvez vos fichiers sur votre disque.</p></div><span class="badge">{{ 'Simulation S3' if simulation else 'AWS S3' }}</span></header>
+  <main>
+    <section class="explorer" aria-labelledby="library-title">
+      <div class="section-title"><h2 id="library-title">Votre bibliothèque</h2><span>{{ bucket }}</span></div>
+      <nav id="breadcrumbs" aria-label="Chemin S3"></nav>
+      <div class="toolbar"><label><input type="checkbox" id="select-all"> Tout sélectionner</label><button id="download" disabled>Télécharger la sélection</button></div>
+      <p id="browse-error" role="alert"></p>
+      <div id="files" aria-live="polite">Chargement…</div>
+      <p class="hint">La sélection est conservée pendant la navigation. Tous les types de fichiers sont affichés.</p>
+    </section>
+    <section class="downloads" aria-labelledby="transfers-title">
+      <div class="section-title"><h2 id="transfers-title">Téléchargements</h2><span>3 simultanés</span></div>
+      <p class="hint">Destination : <code>{{ destination }}</code></p>
+      <p id="transfer-error" role="alert"></p>
+      <div id="transfers"><p class="empty">Vos transferts apparaîtront ici.</p></div>
+    </section>
+  </main>
+  <footer>Lecture S3 uniquement · Arborescence conservée · Téléchargements actifs pendant la navigation</footer>
+</body>
+</html>
