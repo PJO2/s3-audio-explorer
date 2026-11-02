@@ -10,7 +10,7 @@
   <header><div><span class="eyebrow">EXPLORATEUR S3</span><h1>S3 Audio Explorer</h1><p>Explorez votre bucket et retrouvez vos fichiers sur votre disque.</p></div><span class="badge">{{ 'Simulation S3' if simulation else 'AWS S3' }}</span></header>
   <main>
     <section class="explorer" aria-labelledby="library-title">
-      <div class="section-title"><h2 id="library-title">Votre bibliothèque</h2><span>{{ bucket }}</span></div>
+      <div class="section-title"><h2 id="library-title">Votre bibliothèque</h2><span>{{ bucket }} <span id="bucket-size" aria-live="polite">· Taille en cours…</span></span></div>
       <nav id="breadcrumbs" aria-label="Chemin S3"></nav>
       <div class="toolbar"><label><input type="checkbox" id="select-all"> Tout sélectionner</label><button id="download" disabled>Télécharger la sélection</button></div>
       <p id="browse-error" role="alert"></p>

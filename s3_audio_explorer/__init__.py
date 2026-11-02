@@ -58,6 +58,23 @@ def create_app(overrides=None, storage=None):
             app.logger.exception("Échec de la lecture S3")
             return jsonify(error="Impossible de lire S3. Vérifiez le bucket et les identifiants AWS."), 502
 
+    @app.get("/api/bucket-size")
+    def bucket_size():
+        try:
+            return jsonify(storage.bucket_size())
+        except ClientError as exc:
+            code = exc.response.get('Error', {}).get('Code', 'Unknown')
+            if code in ('AccessDenied', 'AccessDeniedException'):
+                message = 'Accès CloudWatch refusé : vérifiez la permission cloudwatch:GetMetricStatistics.'
+            else:
+                message = 'Impossible de lire la taille dans CloudWatch.'
+            return jsonify(error=f'{message} (AWS : {code})'), 502
+        except (NoCredentialsError, PartialCredentialsError, ProfileNotFound):
+            return jsonify(error='Identifiants AWS absents ou profil introuvable.'), 502
+        except Exception:
+            app.logger.exception('Échec de la lecture de la taille CloudWatch')
+            return jsonify(error='Taille indisponible : connexion à CloudWatch impossible.'), 502
+
     @app.get("/api/transfers")
     def transfers():
         return jsonify(transfers=manager.snapshot())

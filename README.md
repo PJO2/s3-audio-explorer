@@ -15,6 +15,8 @@ Ouvrir **http://127.0.0.1:8080**. L'accès réel à AWS S3 est activé par défa
 
 Les fichiers sont enregistrés sur la machine qui exécute Python, dans `downloads/` par défaut. Sélectionner des fichiers dans plusieurs dossiers puis cliquer sur « Télécharger la sélection ». La sélection persiste pendant la navigation. Les transferts se poursuivent si l'onglet est fermé ; rouvrir l'application permet de retrouver leur état tant que le serveur tourne.
 
+La taille du bucket apparaît automatiquement à côté de son nom, avec la date de la mesure quotidienne CloudWatch. La lecture utilise `cloudwatch:GetMetricStatistics` (à autoriser avec `Resource: "*"` en plus des droits S3), les mêmes identifiants et la région configurée. Elle additionne les dimensions de stockage de `BucketSizeBytes` pour le dernier jour disponible sur sept jours, y compris les anciennes versions, les surcoûts et les uploads multipart incomplets. Aucun parcours des fichiers S3 n'est nécessaire. Une mesure obtenue est conservée une heure côté serveur ; recharger la page déclenche sa lecture. Si CloudWatch est inaccessible, « Taille indisponible » apparaît et son infobulle précise la raison ; un appel réussi sans données affiche « Aucune mesure CloudWatch » et n'est pas mis en cache. La navigation reste utilisable. En simulation, la taille est calculée localement.
+
 ## Configuration et AWS
 
 Modifier `config.py` :

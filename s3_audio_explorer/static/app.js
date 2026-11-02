@@ -9,7 +9,27 @@ function element(tag, text, className) {
   return node;
 }
 function bytes(n) {
-  return n >= 1048576 ? `${(n / 1048576).toFixed(1)} Mo` : `${(n / 1024).toFixed(1)} Ko`;
+  const units = ['o', 'Kio', 'Mio', 'Gio', 'Tio', 'Pio'];
+  let unit = 0;
+  while (n >= 1024 && unit < units.length - 1) { n /= 1024; unit++; }
+  return `${n.toLocaleString('fr-FR', {maximumFractionDigits: unit ? 1 : 0})} ${units[unit]}`;
+}
+async function loadBucketSize() {
+  const label = $('#bucket-size');
+  try {
+    const data = await api('/api/bucket-size');
+    if (data.size === null) {
+      label.textContent = '· Aucune mesure CloudWatch';
+      label.title = 'Accès CloudWatch autorisé, mais aucune mesure pour ce bucket sur les sept derniers jours. Vérifiez le compte AWS propriétaire et la région du bucket.';
+      return;
+    }
+    const date = new Date(`${data.date}T00:00:00Z`).toLocaleDateString('fr-FR', {timeZone: 'UTC'});
+    label.textContent = `· ${bytes(data.size)} (${date})`;
+    label.title = 'Taille quotidienne du bucket, anciennes versions et transferts multipart incomplets inclus.';
+  } catch (error) {
+    label.textContent = '· Taille indisponible';
+    label.title = error.message;
+  }
 }
 async function api(url, options) {
   const response = await fetch(url, options);
@@ -105,4 +125,4 @@ async function refreshTransfers() {
   } catch (error) { $('#transfer-error').textContent = error.message; }
 }
 async function poll() { await refreshTransfers(); setTimeout(poll, 700); }
-browse(); poll();
+browse(); poll(); loadBucketSize();
